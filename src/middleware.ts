@@ -7,10 +7,7 @@ export async function middleware(request: NextRequest) {
 	const pathname: any = request.nextUrl.pathname;
 	const cookie: any = request.cookies.get('admin');
 
-	if(!pathname.startsWith("/admin")) {
-		return NextResponse.redirect(new URL('/admin/sign-in', request.url))
-	}
-	else if(pathname.startsWith("/admin/dashboard")) {
+	if(pathname.startsWith("/admin/dashboard")) {
 		if(cookie) {
 			const { value }: { value: string } = cookie;
 			const jwt = verify(value);
