@@ -37,7 +37,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 		return (
 			<section className="py-10">
 				<div className="container">
-					<div className="rounded-md py-10 px-5 bg-gray-50 border max-w-[600px] mx-auto">
+					<div className="rounded-md py-10 px-5 bg-gray-50 border">
 						<div className="text-center flex flex-col justify-center items-center space-y-2">
 							<div className="spin">
 								<span className="bi-arrow-clockwise text-gray-600 text-3xl"></span>

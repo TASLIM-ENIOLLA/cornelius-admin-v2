@@ -67,7 +67,7 @@ export default function Page() {
 		.then((response) => response.json())
 		.then(({ data, error }: { data: any, error: any }) => {
 			setPending(false)
-
+			console.log({ data, error });
 			if(data) {
 				alert(data.message);
 				window && window.location.reload();

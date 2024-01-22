@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 		const name = z.string().min(5).max(50).parse(formData.get("name"));
 		const category_id = z.coerce.number().parse(formData.get("categoryID"));
 		const description = z.coerce.string().parse(formData.get("description"));
-		const quantity = z.string().url().parse(formData.get("quantity"));
+		const quantity = z.string().parse(formData.get("quantity"));
 		const price = z.coerce.number().parse(formData.get("price"));
 		const images = formData.getAll("images[]");
 

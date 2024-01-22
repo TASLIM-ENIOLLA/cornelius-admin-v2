@@ -41,36 +41,46 @@ export async function POST(request: Request) {
 		const quantity: number = z.coerce.number().parse(formData.get("quantity"));
 		const category_id: number = z.coerce.number().parse(formData.get("categoryID"));
 		const description: string = z.coerce.string().parse(formData.get("description"));
+		const imagesUploaded: boolean = z.coerce.boolean().parse(formData.get("imagesUploaded"));
 
 		const images: any[] = formData.getAll("images[]");
+		console.log({imagesUploaded, images})
 
 		const { data, error } = await updateProductData(id, { name, price, category_id, description, type_id, quantity });
 
 		if(data) {
-			await removeOldProductImages(id);
+			if(imagesUploaded) {
+				await removeOldProductImages(id);
+				
+				if(true) {
+					const uploaded = await uploadProductImages(id, images);
 
-			if(true) {
-				const uploaded = await uploadProductImages(id, images);
+					if(uploaded) {
+						return Response.json({
+							data: {
+								message: "Product successfully updated."
+							}
+						});
+					}
 
-				if(uploaded) {
 					return Response.json({
 						data: {
-							message: "Product successfully updated."
+							message: "An error occured finishing the update. Contact you administrator."
 						}
 					});
 				}
 
 				return Response.json({
-					data: {
-						message: "An error occured finishing the update. Contact you administrator."
+					error: {
+						error,
+						message: "Couldn't finish updating product, please retry."
 					}
 				});
 			}
 
 			return Response.json({
-				error: {
-					error,
-					message: "Couldn't finish updating product, please retry."
+				data: {
+					message: "Product successfully updated."
 				}
 			});
 		}

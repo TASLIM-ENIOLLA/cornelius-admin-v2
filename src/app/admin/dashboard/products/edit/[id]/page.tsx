@@ -66,6 +66,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 			setTypes(types.rows);
 			setCategories(categories.rows);
 
+			updateFormData("imagesUploaded", false);
 			setFormData({
 				...productData,
 				typeID: productData.types?.id,
@@ -74,67 +75,9 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 		})();
 	}, []);
 
-
-
-	// function onSubmit(event: any) {
-	// 	event.preventDefault();
-
-	// 	setPending(true);
-
-	// 	const form = new FormData();
-
-	// 	for(let prop in formData) {
-	// 		const value = formData[prop];
-
-	// 		if(Array.isArray(value)) {
-	// 			value.forEach((each) => {
-	// 				form.append(prop + "[]", each);
-	// 			})
-	// 		}
-	// 		else {
-	// 			form.append(prop, value);
-	// 		}
-	// 	}
-
-	// 	fetch("/api/admin/products/new", {
-	// 		body: form,
-	// 		method: "POST",
-	// 		cache: "no-cache"
-	// 	})
-	// 	.then((response) => response.json())
-	// 	.then(({ data, error }: { data: any, error: any }) => {
-	// 		setPending(false)
-
-	// 		if(data) {
-	// 			alert(data.message);
-	// 			window && window.location.reload();
-	// 		}
-	// 		else {
-	// 			alert(error.message)
-	// 		}
-	// 	})
-	// }
-
-	// useEffect(() => {
-	// 	fetch("/api/admin/categories", { cache: "no-cache" })
-	// 	.then((response) => response.json())
-	// 	.then(({ data }: { data?: any }) => {
-	// 		if(data) {
-	// 			setCategories(data.rows);
-	// 		}
-	// 	});
-
-	// 	fetch("/api/admin/types", { cache: "no-cache" })
-	// 	.then((response) => response.json())
-	// 	.then(({ data }: { data?: any }) => {
-	// 		if(data) {
-	// 			setTypes(data.rows);
-	// 		}
-	// 	});
-	// }, []);
-
 	function onSubmit(event: any): void {
 		event.preventDefault();
+		setPending(true);
 
 		const form = new FormData();
 
@@ -158,7 +101,8 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 		})
 		.then((response) => response.json())
 		.then(({ data, error }) => {
-			console.log({ data, error });
+			setPending(false)
+
 			if(data) {
 				window.location.reload();
 			}
@@ -269,6 +213,9 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
       					</div>
       					<ImagePicker
 									files={formData.images}
+									onModified={({modified}) => {
+										updateFormData("imagesUploaded", true);
+									}}
       						onFilesPicked={({ files }) => {
       							updateFormData("images", files)
       						}}
@@ -277,6 +224,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 							<div className="col-span-2 space-y-1">
       					<input
       						type="submit"
+      						disabled={pending}
       						defaultValue="update product"
 									disabled={pending || modified}
       						className="py-3 px-10 font-bold cursor-pointer bg-gray-800 capitalize rounded text-white"
@@ -292,10 +240,12 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 
 type ImagePickerType = {
 	files: any[],
-	onFilesPicked: ({ files }: { files: File[]}) => void
+	onFilesPicked: ({ files }: { files: File[]}) => void,
+	onModified: ({ modified }: { modified: boolean }) => void,
 }
 
-function ImagePicker({ files, onFilesPicked }: ImagePickerType) {
+function ImagePicker({ files, onModified, onFilesPicked }: ImagePickerType) {
+	const [modified, setModified] = useState <boolean> (false);
 	const [images, setImages] = useState <File[]> (files || []);
 
 	useEffect(() => {
@@ -303,6 +253,12 @@ function ImagePicker({ files, onFilesPicked }: ImagePickerType) {
 			onFilesPicked({ files: images });
 		}
 	}, [images])
+
+	useEffect(() => {
+		if(typeof onModified === "function") {
+			onModified({ modified });
+		}
+	}, [modified])
 
 	function ImagePreviewer({ file, onRemove }: { file: File | any, onRemove: () => void }) {
 		const imgSrc = file?.url ?? URL.createObjectURL(file);
@@ -383,6 +339,7 @@ function ImagePicker({ files, onFilesPicked }: ImagePickerType) {
 										if(files) {
 											const filesArray = Array.from(files);
 
+											setModified(true);
 											setImages(filesArray);
 										}
 									}}
