@@ -157,7 +157,7 @@ function ProductItem({ id, name, images, price, categories }: ProductItemType) {
 	console.log({ id, name, images, price, categories });
 
 	return (
-		<div className="border rounded-md">
+		<div className="border overflow-hidden rounded-md">
 			<div className="divide-y">
 				<div className="relative bg-gray-100 h-[150px]">
 					<Image
@@ -165,7 +165,7 @@ function ProductItem({ id, name, images, price, categories }: ProductItemType) {
 						alt="Product image"
 						src={images[0]?.url}
 						className="d-block w-fill"
-						style={{ objectFit: "contain" }}
+						style={{ objectFit: "cover" }}
 					/>
 				</div>
 				<div className="p-3 space-y-1">

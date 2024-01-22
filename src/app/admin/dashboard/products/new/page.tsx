@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import Title from "@/components/admin/title";
 
 export default function Page() {
-	const router = useRouter()
+	const router = useRouter();
+
 	const [pending, setPending] = useState <boolean> (false);
 	const [types, setTypes] = useState <undefined | {
 		id: string,
@@ -21,24 +22,13 @@ export default function Page() {
 		description: string,
 	}[]> ([]);
 
-	/* 
-		{
-		name: string,
-		categoryID: string,
-		description: string,
-		typeID: string,
-		price: string,
-		paymentLink: string,
-		images: File[]
-	}
-	*/
 	const [formData, setFormData] = useState <Record<string, any>> ({
 		name: "",
 		categoryID: "",
 		description: "",
 		typeID: "",
 		price: "",
-		paymentLink: "",
+		quantity: "",
 		images: []
 	});
 
@@ -83,7 +73,7 @@ export default function Page() {
 				window && window.location.reload();
 			}
 			else {
-				alert(error.message)
+				alert(error.message || "An error occured, please retry.")
 			}
 		})
 	}
@@ -162,13 +152,13 @@ export default function Page() {
       				</div>
 							<div className="col-span-2 space-y-1">
       					<div className="text-sm md:text-base text-gray-600 font-medium sentence">
-      						payment link *
+      						product quantity *
       					</div>
       					<input
-      						type="text"
-      						value={formData.paymentLink}
+      						type="number"
+      						value={formData.quantity}
       						className="p-2 border rounded border-gray-300 block w-full"
-      						onChange={({target: {value}}) => updateFormData("paymentLink", value)}
+      						onChange={({target: {value}}) => updateFormData("quantity", value)}
       					/>
       				</div>
 							<div className="col-span-2 space-y-1">
@@ -329,7 +319,7 @@ function PriceInput(props: PriceInputType) {
 		setValue(n => new Intl.NumberFormat("en-US", {
 			minimumFractionDigits: 2,
 			maximumFractionDigits: 2
-		}).format(Number(n)));
+		}).format((Number(n) > 999_999_999 ? 999_999_999 : Number(n))));
 		setType("text");
 	}
 

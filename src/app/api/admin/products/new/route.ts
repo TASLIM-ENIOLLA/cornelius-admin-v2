@@ -12,13 +12,12 @@ export async function POST(request: Request) {
 		const name = z.string().min(5).max(50).parse(formData.get("name"));
 		const category_id = z.coerce.number().parse(formData.get("categoryID"));
 		const description = z.coerce.string().parse(formData.get("description"));
-		const payment_link = z.string().url().parse(formData.get("paymentLink"));
-		const price = z.coerce.number().lte(999999999).parse(formData.get("price"));
-		
+		const quantity = z.string().url().parse(formData.get("quantity"));
+		const price = z.coerce.number().parse(formData.get("price"));
 		const images = formData.getAll("images[]");
 
 		const { data, error } = await Supabase.from('products')
-		.insert([{ name, price, category_id, description, type_id, payment_link }])
+		.insert([{ name, price, category_id, description, type_id, quantity }])
 		.select();
 
 		if(data) {
@@ -30,7 +29,7 @@ export async function POST(request: Request) {
 					access: "public"
 				});
 
-				const { data, error } = await Supabase.from('products_blobs')
+				await Supabase.from('products_blobs')
 				.insert([{ product_id: id, blob_url: blob }])
 				.select();
 			});

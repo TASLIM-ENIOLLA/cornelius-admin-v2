@@ -69,7 +69,6 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 			setFormData({
 				...productData,
 				typeID: productData.types?.id,
-				paymentLink: productData.payment_link,
 				categoryID: productData.categories?.id
 			});
 		})();
@@ -137,7 +136,36 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 	function onSubmit(event: any): void {
 		event.preventDefault();
 
-		console.log({ formData });
+		const form = new FormData();
+
+		for(let prop in formData) {
+			const value = formData[prop];
+
+			if(Array.isArray(value)) {
+				value.forEach((each) => {
+					form.append(prop + "[]", each);
+				})
+			}
+			else {
+				form.append(prop, value);
+			}
+		}
+
+		fetch("/api/admin/products/update/" + id, {
+			body: form,
+			method: "POST",
+			cache: "no-cache"
+		})
+		.then((response) => response.json())
+		.then(({ data, error }) => {
+			console.log({ data, error });
+			if(data) {
+				window.location.reload();
+			}
+			else {
+				alert(error.message)
+			}
+		})
 	}
 
 	if(!formData) {
@@ -215,13 +243,13 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
       				</div>
 							<div className="col-span-2 space-y-1">
       					<div className="text-sm md:text-base text-gray-600 font-medium sentence">
-      						payment link *
+      						product quantity *
       					</div>
       					<input
-      						type="text"
-      						value={formData.paymentLink}
+      						type="number"
+      						value={formData.quantity}
       						className="p-2 border rounded border-gray-300 block w-full"
-      						onChange={({target: {value}}) => updateFormData("paymentLink", value)}
+      						onChange={({target: {value}}) => updateFormData("quantity", value)}
       					/>
       				</div>
 							<div className="col-span-2 space-y-1">
@@ -249,7 +277,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 							<div className="col-span-2 space-y-1">
       					<input
       						type="submit"
-      						defaultValue="add product"
+      						defaultValue="update product"
 									disabled={pending || modified}
       						className="py-3 px-10 font-bold cursor-pointer bg-gray-800 capitalize rounded text-white"
       					/>

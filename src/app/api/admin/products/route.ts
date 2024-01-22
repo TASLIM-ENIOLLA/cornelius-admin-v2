@@ -2,7 +2,8 @@ import Supabase from "@/utils/supabase";
 
 async function getProducts() {
 	return await Supabase.from("products")
-	.select(`id, name, price, description, payment_link, categories (id, name), types (id, name)`);
+	.select(`id, name, price, description, quantity, categories (id, name), types (id, name)`);
+	// .select(`id, name, price, description, payment_link, categories (id, name), types (id, name)`);
 }
 
 async function getProductImages(productsID: string) {

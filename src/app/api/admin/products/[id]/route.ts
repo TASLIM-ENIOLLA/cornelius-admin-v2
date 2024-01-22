@@ -8,15 +8,15 @@ type RouteParams = {
 
 async function getProductData(id: string) {
   return await Supabase.from("products")
-  .select(`id, name, price, description, payment_link, categories (id, name), types (id, name)`)
+  .select(`id, name, price, description, quantity, categories (id, name), types (id, name)`)
   .eq("id", id)
   .single();
 }
 
 async function getProductImages(id: string) {
-	return Supabase.from("products_blobs")
-	.select("blob_url")
-	.eq("product_id", id);
+  return await Supabase.from("products_blobs")
+  .select("blob_url")
+  .eq("product_id", id);
 }
 
 export async function GET(request: Request, { params: { id } }: RouteParams) {
@@ -28,16 +28,16 @@ export async function GET(request: Request, { params: { id } }: RouteParams) {
     return Response.json({
       data: {
         ...productData,
-        images: productImages?.map(each => {
-					return JSON.parse(each.blob_url)
-				})
+        images: productImages?.map((each: any) => {
+          return JSON.parse(each.blob_url)
+        })
       }
     });
   }
 
   return Response.json({
-    data: {
-      message: "All went well"
+    error: {
+      message: "An error occured, please retry."
     }
-  })
+  });
 }

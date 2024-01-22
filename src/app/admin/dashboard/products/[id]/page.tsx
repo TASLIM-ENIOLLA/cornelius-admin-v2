@@ -29,7 +29,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 
 	useEffect(() => {
 		if(productData) {
-			setBigImgSrc(productData.images[0]);
+			setBigImgSrc(productData.images[0]?.url);
 		}
 	}, [productData])
 
@@ -37,7 +37,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 		return (
 			<section className="py-10">
 				<div className="container">
-					<div className="rounded-md py-10 px-5 bg-gray-50 border">
+					<div className="rounded-md py-10 px-5 bg-gray-50 border max-w-[600px] mx-auto">
 						<div className="text-center flex flex-col justify-center items-center space-y-2">
 							<div className="spin">
 								<span className="bi-arrow-clockwise text-gray-600 text-3xl"></span>
@@ -70,6 +70,9 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
 								>
 									{productData.name}
 								</Link>
+							</div>
+							<div className="font-semibold capitalize">
+								{productData.quantity} unit{productData.quantity > 1 ? "s" : ""}
 							</div>
 							<div>
 								<span title={productData.categories?.name} className="px-2 py-1 rounded-sm bg-yellow-200 font-bold text-xs capitalize">
