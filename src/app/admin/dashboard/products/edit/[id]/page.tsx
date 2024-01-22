@@ -226,7 +226,7 @@ export default function Page({ params: { id } }: { params: { id: string}}) {
       						type="submit"
       						disabled={pending}
       						defaultValue="update product"
-									disabled={pending || modified}
+									// disabled={pending || modified}
       						className="py-3 px-10 font-bold cursor-pointer bg-gray-800 capitalize rounded text-white"
       					/>
       				</div>
